@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+#if !NETFRAMEWORK
 using System.Runtime.Loader;
+#endif
 using System.Text;
 using System.Text.RegularExpressions;
 using WindowsDesktop.Properties;
@@ -135,7 +137,11 @@ namespace WindowsDesktop.Interop
 			var result = compilation.Emit(path);
 			if (result.Success)
 			{
+#if NETFRAMEWORK
+				return Assembly.LoadFrom(path);
+#else
 				return AssemblyLoadContext.Default.LoadFromAssemblyPath(path);
+#endif
 			}
 
 			File.Delete(path);
